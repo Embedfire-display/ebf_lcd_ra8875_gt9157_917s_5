@@ -1,0 +1,1 @@
+显示BMP图片需要把test_picture文件夹放到SD卡的根目录。
