@@ -74,7 +74,7 @@ struct i2c_msg {
 	uint8_t *buf;		/* pointer to msg data			*/
 };
 
-
+#define UPDATE_CONFIG    0    // 1 ：更新配置    0 ：不更新配置
 //*************************** PART2:TODO define **********************************
 
 #if 0
@@ -104,7 +104,7 @@ struct i2c_msg {
 		0xff,0xff,0xff,0xff,0x01,\
 	}
 
-#else
+
   
 #define CTP_CFG_GROUP1 {\
 0x00,0x20,0x03,0xE0,0x01,0x05,0x3C,0x00,0x01,0x08,\
@@ -130,14 +130,39 @@ struct i2c_msg {
 
 #endif
 
+/** 
+  * @brief 触摸屏参数
+  */
+typedef struct
+{
+  /*根据触摸屏类型配置*/
+  uint16_t max_width;  //触点最大值,高
+  uint16_t max_height;  //触点最大值，宽
+
+  uint16_t config_reg_addr;  	//不同类型的触摸ic配置寄存器地址不同
+
+}TOUCH_PARAM_TypeDef;
+
+/** 
+  * @brief  触摸屏类型
+  */ 
+typedef enum 
+{
+	GT9157=0,
+	GT917S=1,
+}TOUCH_IC;
+
+extern TOUCH_IC touchIC;
+extern const TOUCH_PARAM_TypeDef touch_param[];
+
 // STEP_3(optional): Specify your special config info if needed
-#define GTP_MAX_HEIGHT   				480
-#define GTP_MAX_WIDTH    				800
+#define GTP_MAX_HEIGHT   touch_param[touchIC].max_height
+#define GTP_MAX_WIDTH    touch_param[touchIC].max_width
 #define GTP_INT_TRIGGER  				0
 #define GTP_MAX_TOUCH         			1
 
-#define LCD_PIXEL_WIDTH       			GTP_MAX_WIDTH   //gt9xx.c用到的宏 代码风格转换
-#define LCD_PIXEL_HEIGHT      			GTP_MAX_HEIGHT  //gt9xx.c用到的宏 代码风格转换
+#define LCD_PIXEL_WIDTH       			LCD_WIDTH   //gt9xx.c用到的宏 代码风格转换
+#define LCD_PIXEL_HEIGHT      			LCD_HEIGHT  //gt9xx.c用到的宏 代码风格转换
 
 
 //***************************PART3:OTHER define*********************************
@@ -195,7 +220,8 @@ struct i2c_msg {
 #define GTP_READ_COOR_ADDR    			0x814E
 #define GTP_REG_SLEEP         			0x8040
 #define GTP_REG_SENSOR_ID     			0x814A
-#define GTP_REG_CONFIG_DATA   			0x8047
+#define GTP_REG_CONFIG_DATA         0x8050
+//#define GTP_REG_CONFIG_DATA   			touch_param[touchIC].config_reg_addr
 #define GTP_REG_VERSION       			0x8140
 
 #define RESOLUTION_LOC        			3
